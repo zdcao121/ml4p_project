@@ -14,27 +14,27 @@
 
 ## Variational Autoencoder (VAE) 原理
 
-Varitional Autoencoder(VAE)是一种生成模型，它的目标是学习一个潜在空间(latent space)的分布，然后通过这个分布来生成新的数据。生成模型可以认为是学习了数据的分布$\hat{P}(x)$，因此可以用来生成新的数据。
+Varitional Autoencoder(VAE)是一种生成模型，它的目标是学习一个潜在空间(latent space)的分布，然后通过这个分布来生成新的数据。生成模型可以认为是学习了数据的分布 $\hat{P}(x)$ ，因此可以用来生成新的数据。
 
 
-VAE通过引入潜在变量$z$来学习数据集的分布：  
+VAE通过引入潜在变量 $z$ 来学习数据集的分布：  
         $$\hat{P}(x) = \int \hat{P}(x|z)P(z) dz$$
-的形式，其中$P(z)$是潜在变量的先验分布。一个简单的VAE模型如下图所示：
+的形式，其中 $P(z)$ 是潜在变量的先验分布。一个简单的VAE模型如下图所示：
 
 <p align = "center">
 <img src="./pic/VAE_Basic.png" width="700" />
 </p>
 
 
-VAE由两部分构成：编码器(encoder)和解码器(decoder)。编码器$p_{\theta}(x|z)$将输入数据$x$映射到潜在空间$z$，解码器$q_{\phi}(z|x)$将潜在变量$z$映射到数据空间$x$, 其中$\theta$和$\phi$是神经网络的训练参数。编码器和解码器都是神经网络，因此VAE也是一种神经网络模型。
+VAE由两部分构成：编码器(encoder)和解码器(decoder)。编码器 $p_{\theta}(x|z)$ 将输入数据 $x$ 映射到潜在空间 $z$ ，解码器 $q_{\phi}(z|x)$ 将潜在变量 $z$ 映射到数据空间 $x$ , 其中 $\theta$ 和 $\phi$ 是神经网络的训练参数。编码器和解码器都是神经网络，因此VAE也是一种神经网络模型。
 
-VAE的损失函数是log-likelihood，即：$log[\hat{P}(x)]$. 由于$\hat{P}(x)$是不可解的，因此VAE使用变分推断的方法来近似$\hat{P}(x)$。这样，VAE的损失函数可以写成：
+VAE的损失函数是log-likelihood，即： $log[ \hat{P}(x) ]$ . 由于 $\hat{P}(x)$ 是不可解的，因此VAE使用变分推断的方法来近似 $\hat{P}(x)$ 。这样，VAE的损失函数可以写成：
 
 $$L(\theta, \phi) = -E_{z\sim q_{\phi}(z|x)}[log(p_{\theta}(x|z))] + KL(q_{\phi}(z|x)||p(z))$$
 
-第一部分是重构误差，用来表征从$x$ -> $z$ -> $x$的损失，第二部分是KL散度（Kullback–Leibler divergence），用于测量编码器与我们定义的 $P(z)$（正态分布）的接近程度。具体推导可以参考（ https://dmol.pub/dl/VAE.html ）。在实际计算中，我们选取$P(z)$为正态分布，即$P(z) = N(0, 1)$，这样KL散度可以直接写出下列形式：
+第一部分是重构误差，用来表征从 $x$ -> $z$ -> $x$ 的损失，第二部分是KL散度（Kullback–Leibler divergence），用于测量编码器与我们定义的 $P(z)$（正态分布）的接近程度。具体推导可以参考（ https://dmol.pub/dl/VAE.html ）。在实际计算中，我们选取 $P(z)$ 为正态分布，即 $P(z) = N(0, 1)$ ，这样KL散度可以直接写出下列形式：
 $$KL[(q_{\theta}(z|x_{i}))||P(z)] = -log \sigma_{i} + \frac{\sigma_{i}^{2}}{2}+\frac{\mu_{i}^{2}}{2}-\frac{1}{2}$$
-其中$\mu_{i}$, $\sigma_{i}$ 是 $q_{\phi}(z|x_{i})$的输出。
+其中 $\mu_{i}$ , $\sigma_{i}$ 是 $q_{\phi}(z|x_{i})$ 的输出。
 
 ## 生成分子轨迹的VAE模型
 
